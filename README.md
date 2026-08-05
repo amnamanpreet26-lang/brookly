@@ -6,10 +6,10 @@ Adds featured-collection images (image + title) to every mega menu in the header
 
 | File | Change |
 |------|--------|
-| `sections/header.liquid` | Adds a new **"Mega menu collections"** block to the Header section schema (and raises `max_blocks` to 15 so you can add one block per menu item). |
+| `sections/header.liquid` | Adds a **"Mega menu collections"** block (desktop, one per menu item) and a **"Mobile menu images"** setting (a single set of up to 3 collections for the mobile drawer). |
 | `snippets/header-mega-menu.liquid` | Renders the selected collections (featured image + title) on the right side of the matching mega menu. Also force-hides the desktop mega menu below 990px so it never appears on mobile. |
-| `snippets/header-drawer.liquid` | Mobile drawer: tapping a top-level item opens **one single panel** — child items with sub-links become bold headings with their links listed flat underneath (no second-level dropdowns) — followed by the same collection image cards in a swipeable row. |
-| `snippets/menu-collection-cards.liquid` | New shared snippet that renders the collection cards for both the desktop mega menu and the mobile drawer, from the same blocks. |
+| `snippets/header-drawer.liquid` | Mobile drawer: tapping a top-level item opens **one single panel** — child items with sub-links become bold headings with their links listed flat underneath (no second-level dropdowns). Three collection images (from "Mobile menu images") show at the very bottom of the drawer menu. |
+| `snippets/menu-collection-cards.liquid` | Shared snippet that renders the collection cards for the desktop mega menu. |
 
 ## How to install
 
@@ -31,11 +31,17 @@ In Shopify admin: **Online Store → Themes → ⋯ → Edit code**, then:
 5. Repeat steps 3–4 for every mega menu (one block per top-level menu item: `Mens`, `Womens`, etc.).
 6. Save.
 
+### Mobile menu images (3 images at the bottom of the drawer)
+
+1. In the theme editor, click the **Header** section itself (not a block).
+2. Scroll to **Mobile menu images** and click **Select collections** — pick up to 3.
+3. Save. They appear side by side at the very bottom of the mobile menu, under all menu items.
+
 ## Notes
 
 - Requires the header's **Desktop menu type** to be set to **Mega menu**, and images only appear for menu items that have sub-links (that's what makes a mega menu open).
 - The image shown is the collection's **featured image** (set on the collection in admin). If a collection has no image, Shopify falls back to its first product's image; if there's neither, a placeholder is shown.
-- One "Mega menu collections" block configures both desktop and mobile — no separate mobile setup needed.
-- On mobile, the desktop mega menu is hidden; only the hamburger drawer shows. Each top-level item opens exactly one panel (no nested dropdowns inside).
+- Desktop and mobile are configured separately: "Mega menu collections" blocks control the desktop mega menus (per menu item); the "Mobile menu images" setting controls the 3 images at the bottom of the mobile drawer.
+- On mobile, the desktop mega menu is hidden; only the hamburger drawer shows. Each top-level item opens exactly one panel (no nested dropdowns inside), with no images inside the panels.
 - If two blocks target the same menu item, the first one wins.
 - `snippets/header-drawer.liquid` here is based on the standard Dawn drawer. If your theme's drawer was customized, compare before replacing.

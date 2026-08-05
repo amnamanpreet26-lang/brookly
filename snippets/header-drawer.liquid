@@ -3,9 +3,9 @@
 
   Mobile behavior: tapping a top-level item opens a single panel ("one drop").
   Child items that have their own sub-links are shown as bold headings with
-  their links listed flat underneath (no nested dropdowns), followed by the
-  collection image cards configured through the header's "Mega menu
-  collections" blocks — matching the desktop mega menu.
+  their links listed flat underneath (no nested dropdowns). Three collection
+  images (header setting "Mobile menu images") are shown at the very bottom
+  of the drawer menu.
 
   Usage:
   {% render 'header-drawer' %}
@@ -29,46 +29,37 @@
     color: rgba(var(--color-foreground), 0.75);
   }
 
-  .menu-collections--drawer {
-    display: flex;
-    gap: 1.2rem;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x mandatory;
+  .menu-drawer__collections {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
     padding: 2rem 3.2rem 3rem;
-    scrollbar-width: none;
   }
 
-  .menu-collections--drawer::-webkit-scrollbar {
-    display: none;
-  }
-
-  .menu-collections--drawer .menu-collections__card {
-    flex: 0 0 42%;
-    scroll-snap-align: start;
+  .menu-drawer__collections .menu-collections__card {
     text-decoration: none;
     color: rgb(var(--color-foreground));
   }
 
-  .menu-collections--drawer .menu-collections__media {
+  .menu-drawer__collections .menu-collections__media {
     aspect-ratio: 3 / 4;
     overflow: hidden;
   }
 
-  .menu-collections--drawer .menu-collections__image {
+  .menu-drawer__collections .menu-collections__image {
     display: block;
     height: 100%;
     width: 100%;
     object-fit: cover;
   }
 
-  .menu-collections--drawer .menu-collections__title {
+  .menu-drawer__collections .menu-collections__title {
     display: block;
-    margin-top: 0.8rem;
+    margin-top: 0.6rem;
     text-align: center;
     text-transform: uppercase;
-    letter-spacing: 0.1rem;
-    font-size: 1.2rem;
+    letter-spacing: 0.08rem;
+    font-size: 1.1rem;
   }
 </style>
 
@@ -161,8 +152,6 @@
                               </li>
                             {%- endfor -%}
                           </ul>
-
-                          {% render 'menu-collection-cards', menu_link: link, context: 'drawer' %}
                         </div>
                       </div>
                     </details>
@@ -181,6 +170,31 @@
                 </li>
               {%- endfor -%}
             </ul>
+
+            {%- if section.settings.mobile_menu_collections.size > 0 -%}
+              <div class="menu-drawer__collections">
+                {%- for collection in section.settings.mobile_menu_collections -%}
+                  <a href="{{ collection.url }}" class="menu-collections__card focus-inset">
+                    <div class="menu-collections__media">
+                      {%- if collection.featured_image != blank -%}
+                        {{
+                          collection.featured_image
+                          | image_url: width: 400
+                          | image_tag:
+                            loading: 'lazy',
+                            widths: '150, 200, 300, 400',
+                            sizes: '30vw',
+                            class: 'menu-collections__image'
+                        }}
+                      {%- else -%}
+                        {{ 'collection-apparel-1' | placeholder_svg_tag: 'menu-collections__image' }}
+                      {%- endif -%}
+                    </div>
+                    <span class="menu-collections__title">{{ collection.title | escape }}</span>
+                  </a>
+                {%- endfor -%}
+              </div>
+            {%- endif -%}
           </nav>
           <div class="menu-drawer__utility-links">
             {%- if shop.customer_accounts_enabled -%}
