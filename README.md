@@ -1,4 +1,21 @@
-# Brookly — Mega Menu Collection Images
+# Brookly — Theme Customizations
+
+## Feature 2: Color swatches on product cards
+
+Product cards show the selected color name with round color dots underneath (selected dot is ringed, hovering a dot previews its name, clicking opens the product with that color selected). A **"Show color swatches"** checkbox in the Product grid section settings toggles them on/off.
+
+| File | Change |
+|------|--------|
+| `snippets/card-product.liquid` | Renders the color name + swatch dots under the price, with styling and hover behavior included. Colors come from the product's Color/Colour option: it uses the option's swatch (from Shopify's category metafields) when set, otherwise falls back to the color name itself. Shows up to 4 dots plus a "+N" link when there are more. |
+| `sections/main-collection-product-grid.liquid` | Adds the **Show color swatches** checkbox (on by default) and passes it to the product cards. |
+
+**Where the toggle is:** Customize → open a collection page → click the **Product grid** section → the **"Show color swatches"** checkbox is under the product card settings (next to "Show second image on hover", etc.).
+
+To show swatches on other product listings too (e.g. Featured collection, Search results), pass `show_color_swatches: true` (or a section setting) to `{% render 'card-product' %}` in those sections the same way.
+
+---
+
+# Feature 1: Mega Menu Collection Images
 
 Adds featured-collection images (image + title) to every mega menu in the header, configurable per menu item from the theme editor. The same images also show in the mobile menu drawer, which opens a single panel per menu item (arneclo.com-style) instead of nested dropdowns.
 
