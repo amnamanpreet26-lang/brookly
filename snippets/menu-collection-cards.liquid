@@ -1,0 +1,50 @@
+{% comment %}
+  Renders the featured-collection cards configured for a top-level menu item
+  through the header's "Mega menu collections" blocks. Used by both the
+  desktop mega menu and the mobile menu drawer.
+
+  Accepts:
+  - menu_link: {Object} the top-level link object to match a block against
+  - context: {String} 'mega' (desktop mega menu) or 'drawer' (mobile drawer)
+
+  Usage:
+  {% render 'menu-collection-cards', menu_link: link, context: 'mega' %}
+{% endcomment %}
+
+{%- liquid
+  assign cards_block = false
+  for block in section.blocks
+    if block.type == 'mega_menu_images'
+      assign block_menu_handle = block.settings.menu_item | handleize
+      if block_menu_handle == menu_link.handle and block.settings.collections.size > 0
+        assign cards_block = block
+        break
+      endif
+    endif
+  endfor
+-%}
+
+{%- if cards_block -%}
+  <div class="menu-collections menu-collections--{{ context }}" {{ cards_block.shopify_attributes }}>
+    {%- for collection in cards_block.settings.collections -%}
+      <a href="{{ collection.url }}" class="menu-collections__card focus-inset">
+        <div class="menu-collections__media">
+          {%- if collection.featured_image != blank -%}
+            {{
+              collection.featured_image
+              | image_url: width: 600
+              | image_tag:
+                loading: 'lazy',
+                widths: '200, 300, 400, 600',
+                sizes: '(min-width: 990px) 200px, 45vw',
+                class: 'menu-collections__image'
+            }}
+          {%- else -%}
+            {{ 'collection-apparel-1' | placeholder_svg_tag: 'menu-collections__image' }}
+          {%- endif -%}
+        </div>
+        <span class="menu-collections__title">{{ collection.title | escape }}</span>
+      </a>
+    {%- endfor -%}
+  </div>
+{%- endif -%}
