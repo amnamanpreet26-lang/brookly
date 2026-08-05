@@ -1,0 +1,205 @@
+{% comment %}
+  Renders a megamenu for the header.
+
+  Collection images: add a "Mega menu collections" block to the Header section
+  in the theme editor, enter the top-level menu item's title and pick up to 4
+  collections. Each collection's featured image + title is shown on the right
+  side of that item's mega menu.
+
+  Usage:
+  {% render 'header-mega-menu' %}
+{% endcomment %}
+
+<style>
+  .mega-menu__inner {
+    display: flex;
+    align-items: flex-start;
+    gap: 4rem;
+  }
+
+  .mega-menu__inner > .mega-menu__list {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .mega-menu__collections {
+    display: flex;
+    flex: 0 1 auto;
+    gap: 2rem;
+    justify-content: flex-end;
+  }
+
+  .mega-menu__collection-card {
+    display: block;
+    flex: 0 1 20rem;
+    min-width: 14rem;
+    text-decoration: none;
+    color: rgb(var(--color-foreground));
+  }
+
+  .mega-menu__collection-media {
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+  }
+
+  .mega-menu__collection-image,
+  .mega-menu__collection-media .placeholder-svg {
+    display: block;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .mega-menu__collection-card:hover .mega-menu__collection-image {
+    transform: scale(1.04);
+  }
+
+  .mega-menu__collection-title {
+    display: block;
+    margin-top: 1rem;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.1rem;
+    font-size: 1.2rem;
+  }
+
+  .mega-menu__collection-card:hover .mega-menu__collection-title {
+    text-decoration: underline;
+    text-underline-offset: 0.3rem;
+  }
+
+  @media screen and (max-width: 1199px) {
+    .mega-menu__collection-card {
+      flex-basis: 16rem;
+    }
+  }
+</style>
+
+<nav class="header__inline-menu">
+  <ul class="list-menu list-menu--inline" role="list">
+    {%- for link in section.settings.menu.links -%}
+      <li>
+        {%- if link.links != blank -%}
+          {%- liquid
+            assign has_collection_images = false
+            for block in section.blocks
+              if block.type == 'mega_menu_images'
+                assign block_menu_handle = block.settings.menu_item | handleize
+                if block_menu_handle == link.handle and block.settings.collections.size > 0
+                  assign has_collection_images = true
+                  assign collection_images_block = block
+                  break
+                endif
+              endif
+            endfor
+          -%}
+          <header-menu>
+            <details id="Details-HeaderMenu-{{ forloop.index }}" class="mega-menu">
+              <summary
+                id="HeaderMenu-{{ link.handle }}"
+                class="header__menu-item list-menu__item link focus-inset"
+              >
+                <span
+                  {%- if link.child_active %}
+                    class="header__active-menu-item"
+                  {% endif %}
+                >
+                  {{- link.title | escape -}}
+                </span>
+                {{- 'icon-caret.svg' | inline_asset_content -}}
+              </summary>
+              <div
+                id="MegaMenu-Content-{{ forloop.index }}"
+                class="mega-menu__content color-{{ section.settings.menu_color_scheme }} gradient motion-reduce global-settings-popup"
+                tabindex="-1"
+              >
+                <div class="mega-menu__inner page-width{% if has_collection_images %} mega-menu__inner--with-images{% endif %}">
+                  <ul
+                    class="mega-menu__list{% if link.levels == 1 %} mega-menu__list--condensed{% endif %}"
+                    role="list"
+                  >
+                    {%- for childlink in link.links -%}
+                      <li>
+                        <a
+                          id="HeaderMenu-{{ link.handle }}-{{ childlink.handle }}"
+                          href="{{ childlink.url }}"
+                          class="mega-menu__link mega-menu__link--level-2 link{% if childlink.current %} mega-menu__link--active{% endif %}"
+                          {% if childlink.current %}
+                            aria-current="page"
+                          {% endif %}
+                        >
+                          {{ childlink.title | escape }}
+                        </a>
+                        {%- if childlink.links != blank -%}
+                          <ul class="list-unstyled" role="list">
+                            {%- for grandchildlink in childlink.links -%}
+                              <li>
+                                <a
+                                  id="HeaderMenu-{{ link.handle }}-{{ childlink.handle }}-{{ grandchildlink.handle }}"
+                                  href="{{ grandchildlink.url }}"
+                                  class="mega-menu__link link{% if grandchildlink.current %} mega-menu__link--active{% endif %}"
+                                  {% if grandchildlink.current %}
+                                    aria-current="page"
+                                  {% endif %}
+                                >
+                                  {{ grandchildlink.title | escape }}
+                                </a>
+                              </li>
+                            {%- endfor -%}
+                          </ul>
+                        {%- endif -%}
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+
+                  {%- if has_collection_images -%}
+                    <div class="mega-menu__collections" {{ collection_images_block.shopify_attributes }}>
+                      {%- for collection in collection_images_block.settings.collections -%}
+                        <a href="{{ collection.url }}" class="mega-menu__collection-card focus-inset">
+                          <div class="mega-menu__collection-media">
+                            {%- if collection.featured_image != blank -%}
+                              {{
+                                collection.featured_image
+                                | image_url: width: 600
+                                | image_tag:
+                                  loading: 'lazy',
+                                  widths: '200, 300, 400, 600',
+                                  sizes: '200px',
+                                  class: 'mega-menu__collection-image'
+                              }}
+                            {%- else -%}
+                              {{ 'collection-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                            {%- endif -%}
+                          </div>
+                          <span class="mega-menu__collection-title">{{ collection.title | escape }}</span>
+                        </a>
+                      {%- endfor -%}
+                    </div>
+                  {%- endif -%}
+                </div>
+              </div>
+            </details>
+          </header-menu>
+        {%- else -%}
+          <a
+            id="HeaderMenu-{{ link.handle }}"
+            href="{{ link.url }}"
+            class="header__menu-item list-menu__item link link--text focus-inset"
+            {% if link.current %}
+              aria-current="page"
+            {% endif %}
+          >
+            <span
+              {%- if link.current %}
+                class="header__active-menu-item"
+              {% endif %}
+            >
+              {{- link.title | escape -}}
+            </span>
+          </a>
+        {%- endif -%}
+      </li>
+    {%- endfor -%}
+  </ul>
+</nav>
