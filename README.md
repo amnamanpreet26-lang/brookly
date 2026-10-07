@@ -1,5 +1,25 @@
 # Brookly — Theme Customizations
 
+## Feature 3: Product page redesign (trikko.co-style)
+
+| File | Change |
+|------|--------|
+| `sections/main-product.liquid` | Adds the custom styling, two new blocks (**Fit note**, **How it fits**), a **Color swatches → Variant images** setting on the Variant picker block, and a new **"Thumbnails left + stacked scroll"** gallery layout option. |
+| `snippets/product-media-gallery.liquid` | New gallery layout: sticky vertical thumbnail rail on the left, all images stacked and scrollable on the right. Clicking a thumbnail scrolls to that image; scrolling highlights the matching thumbnail. Mobile keeps the standard slider. |
+| `snippets/product-variant-picker.liquid` | Renders the Color/Colour option as variant-image swatches when the block setting is on. |
+| `snippets/product-variant-options.liquid` | Renders each color value as a small photo of that color's variant (falls back to the theme's normal swatches if a color has no variant image). |
+
+**Theme editor setup (Customize → open a product page):**
+1. Click the **Product information** section → set **Desktop media layout** to **"Thumbnails left + stacked scroll"** (Media size **Large** recommended).
+2. Click the **Variant picker** block → **Color swatches** → **Variant images** (already the default after this update).
+3. **Add block → Fit note** — the small "Wrong fit?" text; drag it under the variant picker. Edit the wording freely.
+4. In the **Buy buttons** block, keep **"Show dynamic checkout buttons"** checked — that's the Buy now button under Add to cart.
+5. **Add block → How it fits** — pick a **video** (autoplays muted on loop) or an **image**, plus an optional heading/text; drag it under the buy buttons.
+6. Add **Collapsible row** blocks for the tabs (Description, Shipping, etc.) — they now render with uppercase trikko-style titles.
+7. Drag blocks into this order: Title → Price → Variant picker → Fit note → Buy buttons → How it fits → Collapsible rows.
+
+---
+
 ## Feature 2: Color swatches on product cards
 
 Product cards show the selected color name with round color dots underneath (selected dot is ringed, hovering a dot previews its name, clicking opens the product with that color selected). A **"Show color swatches"** checkbox in the Product grid section settings toggles them on/off.
